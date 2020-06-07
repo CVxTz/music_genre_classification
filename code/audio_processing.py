@@ -4,8 +4,6 @@ import numpy as np
 
 input_length = 16000 * 10
 
-batch_size = 32
-
 n_mels = 256
 
 
@@ -17,7 +15,11 @@ def pre_process_audio_mel_t(audio, sample_rate=16000):
 
 
 def load_audio_file(file_path, input_length=input_length):
-    data = librosa.core.load(file_path, sr=16000)[0]  # , sr=16000
+    try:
+        data = librosa.core.load(file_path, sr=16000)[0]  # , sr=16000
+    except ZeroDivisionError:
+        data = []
+
     if len(data) > input_length:
 
         max_offset = len(data) - input_length
@@ -44,7 +46,7 @@ def load_audio_file(file_path, input_length=input_length):
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
-    data = load_audio_file("Yung_Kartz_-_04_-_One_Way.mp3")
+    data = load_audio_file("/media/ml/data_ml/fma_medium/008/008081.mp3")
 
     print(data.shape)
 
