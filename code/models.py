@@ -1,6 +1,6 @@
 from tensorflow.keras.layers import (
     Input,
-    GlobalMaxPool1D,
+    GlobalAvgPool1D,
     Dense,
     Bidirectional,
     GRU,
@@ -14,10 +14,10 @@ from transformer import Encoder
 
 
 def transformer_classifier(
-        num_layers=3,
+        num_layers=4,
         d_model=256,
         num_heads=8,
-        dff=512,
+        dff=256,
         maximum_position_encoding=2048,
         n_classes=16,
 ):
@@ -33,17 +33,15 @@ def transformer_classifier(
 
     x = encoder(inp)
 
-    x = Dropout(0.5)(x)
+    x = Dropout(0.2)(x)
 
-    x = GlobalMaxPool1D()(x)
-
-    x = Dropout(0.5)(x)
+    x = GlobalAvgPool1D()(x)
 
     out = Dense(n_classes, activation="softmax")(x)
 
     model = Model(inputs=inp, outputs=out)
 
-    opt = Adam(0.00001, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
+    opt = Adam(0.0001, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
 
     model.compile(optimizer=opt, loss=sparse_categorical_crossentropy, metrics=["acc"])
 
@@ -65,17 +63,15 @@ def rnn_classifier(
         for i in range(n_layers - 1):
             x = Bidirectional(GRU(d_model, return_sequences=True))(x)
 
-    x = Dropout(0.5)(x)
+    x = Dropout(0.2)(x)
 
-    x = GlobalMaxPool1D()(x)
-
-    x = Dropout(0.5)(x)
+    x = GlobalAvgPool1D()(x)
 
     out = Dense(n_classes, activation="softmax")(x)
 
     model = Model(inputs=inp, outputs=out)
 
-    opt = Adam(0.00001, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
+    opt = Adam(0.0001, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
 
     model.compile(optimizer=opt, loss=sparse_categorical_crossentropy, metrics=["acc"])
 

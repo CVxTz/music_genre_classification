@@ -51,7 +51,7 @@ class DataGenerator(Sequence):
 if __name__ == "__main__":
     h5_name = "transformer.h5"
     batch_size = 32
-    epochs = 100
+    epochs = 20
 
     id_to_genre = json.load(open('/media/ml/data_ml/fma_metadata/tracks_genre.json'))
     id_to_genre = {int(k): v for k, v in id_to_genre.items()}

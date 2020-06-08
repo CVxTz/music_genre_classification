@@ -57,20 +57,22 @@ if __name__ == "__main__":
     from tqdm import tqdm
     from glob import glob
 
-    base_path = '/media/ml/data_ml/fma_medium'
-    files = sorted(list(glob(base_path + "/*/*.mp3")))
-
-    for path in tqdm(files):
-        data = load_audio_file(path, input_length=16000 * 30)
-        np.save(path.replace(".mp3", ".npy"), data)
-
-    # data = load_audio_file("/media/ml/data_ml/fma_medium/008/008081.mp3", input_length=16000 * 30)
+    # base_path = '/media/ml/data_ml/fma_medium'
+    # files = sorted(list(glob(base_path + "/*/*.mp3")))
     #
-    # print(data.shape)
-    # print(random_crop(data, crop_size=128).shape)
-    #
-    # plt.imshow(data.T)
-    # plt.show()
+    # for path in tqdm(files):
+    #     data = load_audio_file(path, input_length=16000 * 30)
+    #     np.save(path.replace(".mp3", ".npy"), data)
+
+    data = load_audio_file("/media/ml/data_ml/fma_medium/008/008081.mp3", input_length=16000 * 30)
+
+    print(data.shape)
+    print(random_crop(data, crop_size=128).shape)
+
+    plt.imshow(data.T)
+    plt.show()
+
+    print(np.min(data), np.max(data))
 
 
 
