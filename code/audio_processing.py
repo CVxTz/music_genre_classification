@@ -1,7 +1,11 @@
+import sys
+import warnings
+
 import librosa
 import numpy as np
 
-
+if not sys.warnoptions:
+    warnings.simplefilter("ignore")
 input_length = 16000 * 10
 
 n_mels = 256
@@ -43,13 +47,30 @@ def load_audio_file(file_path, input_length=input_length):
     return data
 
 
+def random_crop(data, crop_size=128):
+    start = np.random.randint(0, data.shape[0]-crop_size)
+    return data[start:(start+crop_size), :]
+
+
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
+    from tqdm import tqdm
+    from glob import glob
 
-    data = load_audio_file("/media/ml/data_ml/fma_medium/008/008081.mp3")
+    base_path = '/media/ml/data_ml/fma_medium'
+    files = sorted(list(glob(base_path + "/*/*.mp3")))
 
-    print(data.shape)
+    for path in tqdm(files):
+        data = load_audio_file(path, input_length=16000 * 30)
+        np.save(path.replace(".mp3", ".npy"), data)
 
-    plt.imshow(data.T)
-    plt.show()
+    # data = load_audio_file("/media/ml/data_ml/fma_medium/008/008081.mp3", input_length=16000 * 30)
+    #
+    # print(data.shape)
+    # print(random_crop(data, crop_size=128).shape)
+    #
+    # plt.imshow(data.T)
+    # plt.show()
+
+
 

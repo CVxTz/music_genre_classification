@@ -3,7 +3,8 @@ from tensorflow.keras.layers import (
     GlobalMaxPool1D,
     Dense,
     Bidirectional,
-    GRU
+    GRU,
+    Dropout
 )
 from tensorflow.keras.losses import sparse_categorical_crossentropy
 from tensorflow.keras.models import Model
@@ -32,7 +33,11 @@ def transformer_classifier(
 
     x = encoder(inp)
 
+    x = Dropout(0.5)(x)
+
     x = GlobalMaxPool1D()(x)
+
+    x = Dropout(0.5)(x)
 
     out = Dense(n_classes, activation="softmax")(x)
 
@@ -60,7 +65,11 @@ def rnn_classifier(
         for i in range(n_layers - 1):
             x = Bidirectional(GRU(d_model, return_sequences=True))(x)
 
+    x = Dropout(0.5)(x)
+
     x = GlobalMaxPool1D()(x)
+
+    x = Dropout(0.5)(x)
 
     out = Dense(n_classes, activation="softmax")(x)
 

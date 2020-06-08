@@ -7,7 +7,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 from tensorflow.keras.utils import Sequence
 
 from audio_processing import random_crop
-from models import transformer_classifier
+from models import rnn_classifier
 from prepare_data import CLASS_MAPPING, get_id_from_path
 
 
@@ -51,7 +51,7 @@ class DataGenerator(Sequence):
 if __name__ == "__main__":
     h5_name = "transformer.h5"
     batch_size = 32
-    epochs = 100
+    epochs = 20
 
     id_to_genre = json.load(open('/media/ml/data_ml/fma_metadata/tracks_genre.json'))
     id_to_genre = {int(k): v for k, v in id_to_genre.items()}
@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     train, val = train_test_split(samples, test_size=0.2, random_state=1337, stratify=labels)
 
-    model = transformer_classifier()
+    model = rnn_classifier()
 
     checkpoint = ModelCheckpoint(
         h5_name,
