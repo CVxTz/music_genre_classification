@@ -8,7 +8,7 @@ if not sys.warnoptions:
     warnings.simplefilter("ignore")
 input_length = 16000 * 10
 
-n_mels = 256
+n_mels = 128
 
 
 def pre_process_audio_mel_t(audio, sample_rate=16000):

@@ -8,7 +8,7 @@ from tensorflow.keras.utils import Sequence
 
 from audio_processing import random_crop
 from models import transformer_classifier
-from prepare_data import CLASS_MAPPING, get_id_from_path
+from prepare_data import get_id_from_path, labels_to_vector
 
 
 class DataGenerator(Sequence):
@@ -38,7 +38,7 @@ class DataGenerator(Sequence):
     def __data_generation(self, batch_samples):
         paths, labels = zip(*batch_samples)
 
-        labels = [self.class_mapping[x] for x in labels]
+        labels = [labels_to_vector(x, self.class_mapping) for x in labels]
 
         crop_size = np.random.randint(128, 256)
 
@@ -51,20 +51,20 @@ class DataGenerator(Sequence):
 if __name__ == "__main__":
     h5_name = "transformer.h5"
     batch_size = 32
-    epochs = 20
-
-    id_to_genre = json.load(open('/media/ml/data_ml/fma_metadata/tracks_genre.json'))
-    id_to_genre = {int(k): v for k, v in id_to_genre.items()}
+    epochs = 40
+    CLASS_MAPPING = json.load(open('/media/ml/data_ml/fma_metadata/mapping.json'))
+    id_to_genres = json.load(open('/media/ml/data_ml/fma_metadata/tracks_genre.json'))
+    id_to_genres = {int(k): v for k, v in id_to_genres.items()}
 
     base_path = '/media/ml/data_ml/fma_medium'
     files = sorted(list(glob(base_path + "/*/*.npy")))
-    labels = [id_to_genre[int(get_id_from_path(x))] for x in files]
+    labels = [id_to_genres[int(get_id_from_path(x))] for x in files]
 
     samples = list(zip(files, labels))
 
-    train, val = train_test_split(samples, test_size=0.2, random_state=1337, stratify=labels)
+    train, val = train_test_split(samples, test_size=0.2, random_state=1337, stratify=[a[-1] for a in labels])
 
-    model = transformer_classifier()
+    model = transformer_classifier(n_classes=len(CLASS_MAPPING))
 
     checkpoint = ModelCheckpoint(
         h5_name,

@@ -6,7 +6,7 @@ from tensorflow.keras.layers import (
     GRU,
     Dropout
 )
-from tensorflow.keras.losses import sparse_categorical_crossentropy
+from tensorflow.keras.losses import binary_crossentropy
 from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
@@ -15,7 +15,7 @@ from transformer import Encoder
 
 def transformer_classifier(
         num_layers=4,
-        d_model=256,
+        d_model=128,
         num_heads=8,
         dff=256,
         maximum_position_encoding=2048,
@@ -29,6 +29,7 @@ def transformer_classifier(
         num_heads=num_heads,
         dff=dff,
         maximum_position_encoding=maximum_position_encoding,
+        rate=0.3
     )
 
     x = encoder(inp)
@@ -37,13 +38,13 @@ def transformer_classifier(
 
     x = GlobalAvgPool1D()(x)
 
-    out = Dense(n_classes, activation="softmax")(x)
+    out = Dense(n_classes, activation="sigmoid")(x)
 
     model = Model(inputs=inp, outputs=out)
 
     opt = Adam(0.0001, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
 
-    model.compile(optimizer=opt, loss=sparse_categorical_crossentropy, metrics=["acc"])
+    model.compile(optimizer=opt, loss=binary_crossentropy, metrics=["acc"])
 
     model.summary()
 
@@ -51,7 +52,7 @@ def transformer_classifier(
 
 
 def rnn_classifier(
-        d_model=256,
+        d_model=128,
         n_layers=2,
         n_classes=16,
 ):
@@ -67,13 +68,13 @@ def rnn_classifier(
 
     x = GlobalAvgPool1D()(x)
 
-    out = Dense(n_classes, activation="softmax")(x)
+    out = Dense(n_classes, activation="sigmoid")(x)
 
     model = Model(inputs=inp, outputs=out)
 
     opt = Adam(0.0001, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
 
-    model.compile(optimizer=opt, loss=sparse_categorical_crossentropy, metrics=["acc"])
+    model.compile(optimizer=opt, loss=binary_crossentropy, metrics=["acc"])
 
     model.summary()
 
