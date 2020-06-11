@@ -166,13 +166,7 @@ class EncoderLayer(tf.keras.layers.Layer):
 
 class Encoder(tf.keras.layers.Layer):
     def __init__(
-        self,
-        num_layers,
-        d_model,
-        num_heads,
-        dff,
-        maximum_position_encoding,
-        rate=0.1,
+        self, num_layers, d_model, num_heads, dff, maximum_position_encoding, rate=0.1,
     ):
         super(Encoder, self).__init__()
 

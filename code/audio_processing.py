@@ -32,8 +32,7 @@ def load_audio_file(file_path, input_length=input_length):
 
         offset = np.random.randint(max_offset)
 
-        data = data[offset:(input_length + offset)]
-
+        data = data[offset : (input_length + offset)]
 
     else:
         if input_length > len(data):
@@ -50,8 +49,8 @@ def load_audio_file(file_path, input_length=input_length):
 
 
 def random_crop(data, crop_size=128):
-    start = np.random.randint(0, data.shape[0]-crop_size)
-    return data[start:(start+crop_size), :]
+    start = np.random.randint(0, data.shape[0] - crop_size)
+    return data[start : (start + crop_size), :]
 
 
 def save(path):
@@ -66,7 +65,7 @@ if __name__ == "__main__":
     from glob import glob
     from multiprocessing import Pool
 
-    base_path = '/media/ml/data_ml/fma_large'
+    base_path = "/media/ml/data_ml/fma_large"
     files = sorted(list(glob(base_path + "/*/*.mp3")))
 
     print(len(files))
@@ -86,6 +85,3 @@ if __name__ == "__main__":
     # plt.show()
     #
     # print(np.min(data), np.max(data))
-
-
-
