@@ -3,10 +3,12 @@ import warnings
 
 import librosa
 import numpy as np
+import os
 
 if not sys.warnoptions:
     warnings.simplefilter("ignore")
-input_length = 16000 * 10
+
+input_length = 16000 * 30
 
 n_mels = 128
 
@@ -52,27 +54,38 @@ def random_crop(data, crop_size=128):
     return data[start:(start+crop_size), :]
 
 
+def save(path):
+    data = load_audio_file(path)
+    np.save(path.replace(".mp3", ".npy"), data)
+    return True
+
+
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
     from tqdm import tqdm
     from glob import glob
+    from multiprocessing import Pool
 
-    # base_path = '/media/ml/data_ml/fma_medium'
-    # files = sorted(list(glob(base_path + "/*/*.mp3")))
+    base_path = '/media/ml/data_ml/fma_large'
+    files = sorted(list(glob(base_path + "/*/*.mp3")))
+
+    print(len(files))
+
+    p = Pool(8)
+
+    for i, _ in tqdm(enumerate(p.imap(save, files))):
+        if i % 1000 == 0:
+            print(i)
+
+    # data = load_audio_file("/media/ml/data_ml/fma_medium/008/008081.mp3", input_length=16000 * 30)
     #
-    # for path in tqdm(files):
-    #     data = load_audio_file(path, input_length=16000 * 30)
-    #     np.save(path.replace(".mp3", ".npy"), data)
-
-    data = load_audio_file("/media/ml/data_ml/fma_medium/008/008081.mp3", input_length=16000 * 30)
-
-    print(data.shape)
-    print(random_crop(data, crop_size=128).shape)
-
-    plt.imshow(data.T)
-    plt.show()
-
-    print(np.min(data), np.max(data))
+    # print(data.shape)
+    # print(random_crop(data, crop_size=128).shape)
+    #
+    # plt.imshow(data.T)
+    # plt.show()
+    #
+    # print(np.min(data), np.max(data))
 
 
 

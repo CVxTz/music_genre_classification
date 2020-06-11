@@ -7,7 +7,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 from tensorflow.keras.utils import Sequence
 
 from audio_processing import random_crop
-from models import transformer_classifier
+from models import rnn_classifier
 from prepare_data import get_id_from_path, labels_to_vector
 
 
@@ -71,7 +71,7 @@ if __name__ == "__main__":
 
     train, val = train_test_split(samples, test_size=0.2, random_state=1337, stratify=strat)
 
-    model = transformer_classifier(n_classes=len(CLASS_MAPPING))
+    model = rnn_classifier(n_classes=len(CLASS_MAPPING))
 
     checkpoint = ModelCheckpoint(
         h5_name,
