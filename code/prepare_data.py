@@ -13,7 +13,7 @@ import json
 import numpy as np
 from tensorflow.keras.utils import Sequence
 
-from audio_processing import random_crop
+from audio_processing import random_crop, random_mask
 
 
 class DataGenerator(Sequence):
@@ -54,12 +54,11 @@ class DataGenerator(Sequence):
 
 
 class PretrainGenerator(Sequence):
-    def __init__(self, path_x_label_list, class_mapping, batch_size=32):
+    def __init__(self, path_x_label_list, batch_size=32):
         self.path_x_label_list = path_x_label_list
 
         self.batch_size = batch_size
         self.indexes = np.arange(len(self.path_x_label_list))
-        self.class_mapping = class_mapping
         self.on_epoch_end()
 
     def __len__(self):
@@ -78,18 +77,17 @@ class PretrainGenerator(Sequence):
         np.random.shuffle(self.indexes)
 
     def __data_generation(self, batch_samples):
-        paths, labels = zip(*batch_samples)
-
-        labels = [labels_to_vector(x, self.class_mapping) for x in labels]
+        paths, _ = zip(*batch_samples)
 
         crop_size = np.random.randint(128, 256)
 
         X = [random_crop(np.load(x), crop_size=crop_size) for x in paths]
+        Y = [random_mask(a) for a in X]
 
         X = np.array(X)
-        Y = np.array(labels)
+        Y = np.array(Y)
 
-        return X, Y[..., np.newaxis]
+        return X, Y
 
 
 def load(filepath):
