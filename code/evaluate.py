@@ -2,7 +2,7 @@ import json
 from glob import glob
 
 import numpy as np
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, average_precision_score
 from sklearn.model_selection import train_test_split
 
 from models import rnn_classifier, transformer_classifier
@@ -59,8 +59,8 @@ if __name__ == "__main__":
 
         all_labels += [labels_to_vector(x, CLASS_MAPPING) for x in labels]
 
-        crop_size = 256
-        repeats = 4
+        crop_size = np.random.randint(128, 256)
+        repeats = 8
 
         transformer_Y = 0
         rnn_Y = 0
@@ -78,9 +78,26 @@ if __name__ == "__main__":
     R_Y = np.array(rnn_all_preds)
     Y = np.array(all_labels)
 
+    trsf_ave_auc_pr = 0
+    rnn_ave_auc_pr = 0
+
+    total_sum = 0
+
     for label, i in CLASS_MAPPING.items():
         if np.sum(Y[:, i]) > 0:
+            trsf_auc = average_precision_score(Y[:, i], T_Y[:, i])
+            rnn_auc = average_precision_score(Y[:, i], R_Y[:, i])
             print(label, np.sum(Y[:, i]))
-            print("transformer :", f1_score(Y[:, i], (T_Y[:, i] > 0.5).astype(int)))
-            print("rnn         :", f1_score(Y[:, i], (R_Y[:, i] > 0.5).astype(int)))
+            print("transformer :", trsf_auc)
+            print("rnn         :", rnn_auc)
             print("")
+
+            trsf_ave_auc_pr += np.sum(Y[:, i]) * trsf_auc
+            rnn_ave_auc_pr += np.sum(Y[:, i]) * rnn_auc
+            total_sum += np.sum(Y[:, i])
+
+    trsf_ave_auc_pr /= total_sum
+    rnn_ave_auc_pr /= total_sum
+
+    print("transformer micro-average : ", trsf_ave_auc_pr)
+    print("rnn micro-average :         ", rnn_ave_auc_pr)

@@ -53,6 +53,45 @@ class DataGenerator(Sequence):
         return X, Y[..., np.newaxis]
 
 
+class PretrainGenerator(Sequence):
+    def __init__(self, path_x_label_list, class_mapping, batch_size=32):
+        self.path_x_label_list = path_x_label_list
+
+        self.batch_size = batch_size
+        self.indexes = np.arange(len(self.path_x_label_list))
+        self.class_mapping = class_mapping
+        self.on_epoch_end()
+
+    def __len__(self):
+        return int(np.floor(len(self.path_x_label_list) / self.batch_size / 10))
+
+    def __getitem__(self, index):
+        indexes = self.indexes[index * self.batch_size : (index + 1) * self.batch_size]
+
+        batch_samples = [self.path_x_label_list[k] for k in indexes]
+
+        x, y = self.__data_generation(batch_samples)
+
+        return x, y
+
+    def on_epoch_end(self):
+        np.random.shuffle(self.indexes)
+
+    def __data_generation(self, batch_samples):
+        paths, labels = zip(*batch_samples)
+
+        labels = [labels_to_vector(x, self.class_mapping) for x in labels]
+
+        crop_size = np.random.randint(128, 256)
+
+        X = [random_crop(np.load(x), crop_size=crop_size) for x in paths]
+
+        X = np.array(X)
+        Y = np.array(labels)
+
+        return X, Y[..., np.newaxis]
+
+
 def load(filepath):
     # https://github.com/mdeff/fma/blob/rc1/utils.py
 

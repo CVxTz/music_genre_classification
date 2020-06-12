@@ -12,6 +12,7 @@ from tensorflow.python.framework import ops
 from tensorflow.python.keras import backend as K
 from tensorflow.python.ops import clip_ops
 from tensorflow.python.ops import math_ops
+from tensorflow.keras.losses import mae
 
 from transformer import Encoder
 
@@ -71,6 +72,39 @@ def transformer_classifier(
 
     model.compile(
         optimizer=opt, loss=custom_binary_crossentropy, metrics=[custom_binary_accuracy]
+    )
+
+    model.summary()
+
+    return model
+
+
+def transformer_pretrain(
+    num_layers=4,
+    d_model=128,
+    num_heads=8,
+    dff=256,
+    maximum_position_encoding=2048,
+):
+    inp = Input((None, d_model))
+
+    encoder = Encoder(
+        num_layers=num_layers,
+        d_model=d_model,
+        num_heads=num_heads,
+        dff=dff,
+        maximum_position_encoding=maximum_position_encoding,
+        rate=0.3
+    )
+
+    out = encoder(inp)
+
+    model = Model(inputs=inp, outputs=out)
+
+    opt = Adam(0.0001)
+
+    model.compile(
+        optimizer=opt, loss=mae
     )
 
     model.summary()

@@ -53,6 +53,19 @@ def random_crop(data, crop_size=128):
     return data[start : (start + crop_size), :]
 
 
+def random_mask(data):
+    new_data = data.copy()
+    prev_zero = False
+    for i in range(new_data.shape[0]):
+        if np.random.uniform(0, 1) < 0.1 or (prev_zero and np.random.uniform(0, 1) < 0.5):
+            prev_zero = True
+            new_data[i, :] = 0
+        else:
+            prev_zero = False
+
+    return new_data
+
+
 def save(path):
     data = load_audio_file(path)
     np.save(path.replace(".mp3", ".npy"), data)
@@ -79,9 +92,15 @@ if __name__ == "__main__":
     # data = load_audio_file("/media/ml/data_ml/fma_medium/008/008081.mp3", input_length=16000 * 30)
     #
     # print(data.shape)
-    # print(random_crop(data, crop_size=128).shape)
     #
+    # new_data =random_mask(data)
+    #
+    # plt.figure()
     # plt.imshow(data.T)
+    # plt.show()
+    #
+    # plt.figure()
+    # plt.imshow(new_data.T)
     # plt.show()
     #
     # print(np.min(data), np.max(data))
