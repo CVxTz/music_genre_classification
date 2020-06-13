@@ -10,10 +10,9 @@ from prepare_data import get_id_from_path, DataGenerator
 if __name__ == "__main__":
     from collections import Counter
 
-    h5_name = "transformer_v2.h5"
-    h5_pretrain = "transformer_pretrain.h5"
+    h5_name = "transformer.h5"
     batch_size = 32
-    epochs = 200
+    epochs = 50
     CLASS_MAPPING = json.load(open("/media/ml/data_ml/fma_metadata/mapping.json"))
     id_to_genres = json.load(open("/media/ml/data_ml/fma_metadata/tracks_genre.json"))
     id_to_genres = {int(k): v for k, v in id_to_genres.items()}
@@ -36,8 +35,7 @@ if __name__ == "__main__":
 
     model = transformer_classifier(n_classes=len(CLASS_MAPPING))
 
-    if h5_pretrain:
-        model.load_weights(h5_pretrain, by_name=True)
+    model.load_weights(h5_name, by_name=True)
 
     checkpoint = ModelCheckpoint(
         h5_name,

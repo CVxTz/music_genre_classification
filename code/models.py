@@ -32,7 +32,7 @@ def custom_binary_crossentropy(y_true, y_pred):
     output = clip_ops.clip_by_value(y_pred, epsilon_, 1.0 - epsilon_)
 
     # Compute cross entropy from probabilities.
-    bce = 20 * y_true * math_ops.log(output + K.epsilon())
+    bce = 4 * y_true * math_ops.log(output + K.epsilon())
     bce += (1 - y_true) * math_ops.log(1 - output + K.epsilon())
     return K.sum(-bce, axis=-1)
 

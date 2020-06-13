@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
         all_labels += [labels_to_vector(x, CLASS_MAPPING) for x in labels]
 
-        crop_size = np.random.randint(128, 256)
+        crop_size = np.random.randint(128, 512)
         repeats = 8
 
         transformer_Y = 0
@@ -123,7 +123,7 @@ if __name__ == "__main__":
 
     rnn_ave_auc_pr /= total_sum
 
-    print("transformer micro-average    : ", trsf_ave_auc_pr)
-    print("transformer v2 micro-average : ", trsf_v2_ave_auc_pr)
+    print("transformer micro-average     : ", trsf_ave_auc_pr)
+    print("transformer v2 micro-average  : ", trsf_v2_ave_auc_pr)
 
-    print("rnn micro-average            : ", rnn_ave_auc_pr)
+    print("rnn micro-average             : ", rnn_ave_auc_pr)
