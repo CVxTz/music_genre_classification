@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     h5_name = "transformer_pretrain.h5"
     batch_size = 32
-    epochs = 400
+    epochs = 100
     id_to_genres = json.load(open("/media/ml/data_ml/fma_metadata/tracks_genre.json"))
     id_to_genres = {int(k): v for k, v in id_to_genres.items()}
 
@@ -33,6 +33,12 @@ if __name__ == "__main__":
     )
 
     model = transformer_pretrain()
+
+    try:
+        model.load_weights(h5_name, by_name=True)
+        print("Weights Loaded")
+    except:
+        print("Could not load weights")
 
     checkpoint = ModelCheckpoint(
         h5_name,

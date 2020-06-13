@@ -97,7 +97,9 @@ def transformer_pretrain(
         rate=0.3
     )
 
-    out = encoder(inp)
+    x = encoder(inp)
+
+    out = Dense(d_model, activation="linear", name="out_pretraining")(x)
 
     model = Model(inputs=inp, outputs=out)
 
