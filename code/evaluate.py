@@ -18,6 +18,8 @@ if __name__ == "__main__":
     from collections import Counter
 
     transformer_h5 = "transformer.h5"
+    transformer_v2_h5 = "transformer_v2.h5"
+
     rnn_h5 = "rnn.h5"
 
     batch_size = 128
@@ -43,13 +45,19 @@ if __name__ == "__main__":
     )
 
     transformer_model = transformer_classifier(n_classes=len(CLASS_MAPPING))
+    transformer_v2_model = transformer_classifier(n_classes=len(CLASS_MAPPING))
+
     rnn_model = rnn_classifier(n_classes=len(CLASS_MAPPING))
 
     transformer_model.load_weights(transformer_h5)
+    transformer_v2_model.load_weights(transformer_v2_h5)
+
     rnn_model.load_weights(rnn_h5)
 
     all_labels = []
     transformer_all_preds = []
+    transformer_v2_all_preds = []
+
     rnn_all_preds = []
 
     for batch_samples in tqdm(
@@ -63,22 +71,32 @@ if __name__ == "__main__":
         repeats = 8
 
         transformer_Y = 0
+        transformer_v2_Y = 0
+
         rnn_Y = 0
 
         for _ in range(repeats):
             X = np.array([random_crop(np.load(x), crop_size=crop_size) for x in paths])
 
             transformer_Y += transformer_model.predict(X) / repeats
+            transformer_v2_Y += transformer_v2_model.predict(X) / repeats
+
             rnn_Y += rnn_model.predict(X) / repeats
 
         transformer_all_preds.extend(transformer_Y.tolist())
+        transformer_v2_all_preds.extend(transformer_v2_Y.tolist())
+
         rnn_all_preds.extend(rnn_Y.tolist())
 
     T_Y = np.array(transformer_all_preds)
+    T_v2_Y = np.array(transformer_v2_all_preds)
+
     R_Y = np.array(rnn_all_preds)
     Y = np.array(all_labels)
 
     trsf_ave_auc_pr = 0
+    trsf_v2_ave_auc_pr = 0
+
     rnn_ave_auc_pr = 0
 
     total_sum = 0
@@ -86,18 +104,26 @@ if __name__ == "__main__":
     for label, i in CLASS_MAPPING.items():
         if np.sum(Y[:, i]) > 0:
             trsf_auc = average_precision_score(Y[:, i], T_Y[:, i])
+            trsf_v2_auc = average_precision_score(Y[:, i], T_v2_Y[:, i])
             rnn_auc = average_precision_score(Y[:, i], R_Y[:, i])
             print(label, np.sum(Y[:, i]))
-            print("transformer :", trsf_auc)
-            print("rnn         :", rnn_auc)
+            print("transformer   :", trsf_auc)
+            print("transformer v2:", trsf_v2_auc)
+            print("rnn           :", rnn_auc)
             print("")
 
             trsf_ave_auc_pr += np.sum(Y[:, i]) * trsf_auc
+            trsf_v2_ave_auc_pr += np.sum(Y[:, i]) * trsf_v2_auc
+
             rnn_ave_auc_pr += np.sum(Y[:, i]) * rnn_auc
             total_sum += np.sum(Y[:, i])
 
     trsf_ave_auc_pr /= total_sum
+    trsf_v2_ave_auc_pr /= total_sum
+
     rnn_ave_auc_pr /= total_sum
 
-    print("transformer micro-average : ", trsf_ave_auc_pr)
-    print("rnn micro-average :         ", rnn_ave_auc_pr)
+    print("transformer micro-average    : ", trsf_ave_auc_pr)
+    print("transformer v2 micro-average : ", trsf_v2_ave_auc_pr)
+
+    print("rnn micro-average            : ", rnn_ave_auc_pr)
