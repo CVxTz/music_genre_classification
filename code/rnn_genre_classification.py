@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     model = rnn_classifier(n_classes=len(CLASS_MAPPING))
 
-    model.load_weights(h5_name, by_name=True)
+    model.load_weights(h5_name)
 
     checkpoint = ModelCheckpoint(
         h5_name,

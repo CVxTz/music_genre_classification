@@ -39,7 +39,7 @@ if __name__ == "__main__":
     if h5_pretrain:
         model.load_weights(h5_pretrain, by_name=True)
 
-    model.load_weights(h5_name, by_name=True)
+    model.load_weights(h5_name)
 
     checkpoint = ModelCheckpoint(
         h5_name,
