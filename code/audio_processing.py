@@ -57,7 +57,9 @@ def random_mask(data):
     new_data = data.copy()
     prev_zero = False
     for i in range(new_data.shape[0]):
-        if np.random.uniform(0, 1) < 0.1 or (prev_zero and np.random.uniform(0, 1) < 0.5):
+        if np.random.uniform(0, 1) < 0.1 or (
+            prev_zero and np.random.uniform(0, 1) < 0.5
+        ):
             prev_zero = True
             new_data[i, :] = 0
         else:

@@ -80,11 +80,7 @@ def transformer_classifier(
 
 
 def transformer_pretrain(
-    num_layers=4,
-    d_model=128,
-    num_heads=8,
-    dff=256,
-    maximum_position_encoding=2048,
+    num_layers=4, d_model=128, num_heads=8, dff=256, maximum_position_encoding=2048,
 ):
     inp = Input((None, d_model))
 
@@ -94,7 +90,7 @@ def transformer_pretrain(
         num_heads=num_heads,
         dff=dff,
         maximum_position_encoding=maximum_position_encoding,
-        rate=0.3
+        rate=0.3,
     )
 
     x = encoder(inp)
@@ -105,9 +101,7 @@ def transformer_pretrain(
 
     opt = Adam(0.0001)
 
-    model.compile(
-        optimizer=opt, loss=mae
-    )
+    model.compile(optimizer=opt, loss=mae)
 
     model.summary()
 

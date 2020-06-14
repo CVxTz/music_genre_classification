@@ -59,9 +59,7 @@ if __name__ == "__main__":
 
     model.fit_generator(
         PretrainGenerator(train, batch_size=batch_size),
-        validation_data=PretrainGenerator(
-            val, batch_size=batch_size
-        ),
+        validation_data=PretrainGenerator(val, batch_size=batch_size),
         epochs=epochs,
         callbacks=[checkpoint, reduce_o_p],
         use_multiprocessing=True,
