@@ -8,6 +8,8 @@ from sklearn.model_selection import train_test_split
 from models import rnn_classifier, transformer_classifier
 from prepare_data import get_id_from_path, labels_to_vector, random_crop
 from tqdm import tqdm
+import matplotlib.pyplot as plt
+from sklearn.metrics import precision_recall_curve
 
 
 def chunker(seq, size):
@@ -67,8 +69,8 @@ if __name__ == "__main__":
 
         all_labels += [labels_to_vector(x, CLASS_MAPPING) for x in labels]
 
-        crop_size = np.random.randint(128, 512)
-        repeats = 8
+        crop_size = np.random.randint(128, 256)
+        repeats = 16
 
         transformer_Y = 0
         transformer_v2_Y = 0
@@ -117,6 +119,22 @@ if __name__ == "__main__":
 
             rnn_ave_auc_pr += np.sum(Y[:, i]) * rnn_auc
             total_sum += np.sum(Y[:, i])
+
+            if label == "Hip-Hop":
+                precision, recall, _ = precision_recall_curve(Y[:, i], T_Y[:, i])
+                average_precision = average_precision_score(Y[:, i], T_Y[:, i])
+
+                plt.figure()
+                plt.step(recall, precision, where='post')
+
+                plt.xlabel('Recall')
+                plt.ylabel('Precision')
+                plt.ylim([0.0, 1.05])
+                plt.xlim([0.0, 1.0])
+                plt.title(
+                    'Average precision score '
+                        .format(average_precision))
+                plt.savefig("plot.png")
 
     trsf_ave_auc_pr /= total_sum
     trsf_v2_ave_auc_pr /= total_sum
