@@ -9,7 +9,7 @@ music genre classification : GRU vs Transformer
 ### Steps to install env:
 
 ```
-python -m pip install -r requirements
+python -m pip install -r requirements.txt
 ```
 
 ### Steps to run:
