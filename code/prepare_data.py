@@ -91,7 +91,7 @@ class PretrainGenerator(Sequence):
 
 
 def load(filepath):
-    # https://github.com/mdeff/fma/blob/rc1/utils.py
+    # From https://github.com/mdeff/fma/blob/rc1/utils.py / MIT License
 
     filename = os.path.basename(filepath)
 
