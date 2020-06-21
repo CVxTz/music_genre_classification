@@ -1,6 +1,7 @@
 # music_genre_classification
 music genre classification : GRU vs Transformer
 
+Code for: https://towardsdatascience.com/music-genre-classification-transformers-vs-recurrent-neural-networks-631751a71c58
 
 ### Data:
 
